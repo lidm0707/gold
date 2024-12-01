@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/main.rs",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1733076542847,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1733076542847,
+            "name": "Commit-0",
+            "content": "use reqwest::blocking::get;\nuse scraper::{Html, Selector};\nuse std::error::Error;\n\nfn fetch_gold_prices() -> Result<(), Box<dyn Error>> {\n    // URL ของเว็บไซต์\n    let url = \"https://www.goldtraders.or.th/\";\n\n    // ส่งคำขอ HTTP GET\n    let response = get(url)?.text()?;\n\n    // แปลง HTML เป็น Scraper\n    let document = Html::parse_document(&response);\n\n    // สร้าง selector สำหรับดึงข้อมูลจาก span ที่มี id ที่เกี่ยวข้อง\n    let sell_selector = Selector::parse(\"#DetailPlace_uc_goldprices1_lblBLSell\").unwrap();\n    let buy_selector = Selector::parse(\"#DetailPlace_uc_goldprices1_lblBLBuy\").unwrap();\n    let omsell_selector = Selector::parse(\"#DetailPlace_uc_goldprices1_lblOMSell\").unwrap();\n    let ombuy_selector = Selector::parse(\"#DetailPlace_uc_goldprices1_lblOMBuy\").unwrap();\n\n    // ดึงราคาทองคำจาก span ต่างๆ\n    let sell_price = document.select(&sell_selector).next().map(|e| e.text().collect::<String>());\n    let buy_price = document.select(&buy_selector).next().map(|e| e.text().collect::<String>());\n    let omsell_price = document.select(&omsell_selector).next().map(|e| e.text().collect::<String>());\n    let ombuy_price = document.select(&ombuy_selector).next().map(|e| e.text().collect::<String>());\n\n    // แสดงผลลัพธ์\n    println!(\"ราคาทองคำแท่ง 96.5% ขายออก: {}\", sell_price.unwrap_or(\"ไม่พบข้อมูล\".to_string()));\n    println!(\"ราคาทองคำแท่ง 96.5% รับซื้อ: {}\", buy_price.unwrap_or(\"ไม่พบข้อมูล\".to_string()));\n    println!(\"ราคาทองรูปพรรณ 96.5% ขายออก: {}\", omsell_price.unwrap_or(\"ไม่พบข้อมูล\".to_string()));\n    println!(\"ราคาทองรูปพรรณ 96.5% รับซื้อ: {}\", ombuy_price.unwrap_or(\"ไม่พบข้อมูล\".to_string()));\n\n    Ok(())\n}\n\nfn main() {\n    if let Err(e) = fetch_gold_prices() {\n        println!(\"เกิดข้อผิดพลาด: {}\", e);\n    }\n}\n"
+        }
+    ]
+}
